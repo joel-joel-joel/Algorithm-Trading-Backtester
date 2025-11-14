@@ -12,27 +12,6 @@ A complete Python-based algorithmic trading backtesting framework for testing MA
 - Generate visualizations (price charts, equity curves, drawdown charts)
 - Unit tests for all components
 
-## Folder Structure
-```
-algo-backtester/
-├── data/
-│   └── sample.csv
-├── src/
-│   ├── data_loader.py   # Data loading and fetching
-│   ├── indicators.py    # Technical indicators
-│   ├── signals.py       # Signal generation
-│   ├── backtester.py    # Backtesting engine
-│   ├── metrics.py       # Performance metrics
-│   ├── plotter.py       # Visualization
-│   └── main.py          # CLI runner
-├── tests/
-│   ├── test_indicators.py
-│   ├── test_signals.py
-│   └── test_backtester.py
-├── requirements.txt
-└── README.md
-```
-
 ## Strategy Explanation
 **Simple MA Crossover**: Buy when short MA crosses above long MA, sell when it crosses below.
 
