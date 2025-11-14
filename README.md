@@ -4,53 +4,84 @@
 A complete Python-based algorithmic trading backtesting framework for testing MA crossover strategies on historical stock data.
 
 ## Why I Made This
-This project was created to apply fundamental algorithmic trading concepts and build a robust testing framework from scratch. Built entirely on Replit, the goal was to understand the complete lifecycle of a trading strategy—from data acquisition to performance analysis—without relying on pre-built backtesting libraries.
+I've been interested in finance since I started university but I only revently started delving into the world of stocks and trading concepts. This project is my attempt to apply fundamental algorithmic trading concepts and try building a testing framework. Built this on Repilt.
 
 ## Tech Stack
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
 | Language | Python 3.x | Core logic and calculations |
-| Data Source | Yahoo Finance API | Historical stock data |
+| Data Source | yfinance | Yahoo Finance API integration |
 | Data Processing | pandas, NumPy | Time series analysis |
 | Visualization | matplotlib | Chart generation |
 | Testing | pytest | Unit testing framework |
 
 ## Key Features & Implementation Details
 
-### 1. Historical Data Management
-- **Yahoo Finance Integration:** Downloads OHLCV data for any ticker
-- **Date Range Flexibility:** Customizable start/end dates
-- **Data Validation:** Handles missing data and market holidays
+### 1. Modular Architecture
+- **Data Layer** (`data_loader.py`): Yahoo Finance integration with CSV fallback support
+- **Indicators** (`indicators.py`): Technical indicator library (SMA, EMA, RSI)
+- **Signals** (`signals.py`): Strategy signal generation logic
+- **Backtester** (`backtester.py`): Core execution engine with trade tracking
+- **Metrics** (`metrics.py`): Comprehensive performance calculations
+- **Plotter** (`plotter.py`): Visualization suite for analysis
 
-### 2. Technical Indicators
-- **Simple Moving Average (SMA):** Configurable window periods
-- **Exponential Moving Average (EMA):** Weighted averaging for recent prices
-- **RSI (Relative Strength Index):** Momentum oscillator
-- **Extensible Framework:** Easy to add custom indicators
+### 2. Historical Data Management
+- **Yahoo Finance Integration:** Downloads OHLCV data for any ticker via `yfinance`
+- **Date Range Flexibility:** Customizable start/end dates via command-line arguments
+- **Data Preparation:** Automatic datetime indexing and chronological sorting
+- **CSV Support:** Alternative data loading from local files
 
-### 3. Trading Signal Generation
-- **MA Crossover Strategy:** Buy when short MA crosses above long MA, sell when it crosses below
-- **No Lookahead Bias:** Signals generated using only historical data available at that time
-- **Signal Validation:** Ensures trade logic integrity
+### 3. Technical Indicators
+```python
+# Simple Moving Average
+def sma(data, window):
+    return data.rolling(window=window).mean()
 
-### 4. Backtesting Engine
-- **Trade Execution:** Simulates buy/sell orders on historical data
-- **Position Tracking:** Maintains portfolio state throughout backtest
-- **Transaction Costs:** (Future: slippage and commission modeling)
+# Exponential Moving Average
+def ema(data, window):
+    return data.ewm(span=window, adjust=False).mean()
 
-### 5. Performance Metrics
-- **Total Return:** Percentage return of strategy
-- **CAGR:** Compound Annual Growth Rate
-- **Max Drawdown:** Largest peak-to-trough decline
+# Relative Strength Index
+def rsi(data, window=14):
+    # Momentum oscillator calculation
+```
+
+### 4. Trading Strategy
+- **MA Crossover Logic:** Buy when short MA crosses above long MA, sell when it crosses below
+- **Signal Generation:** Returns series of 1 (buy), -1 (sell), 0 (hold)
+- **No Lookahead Bias:** Signals use only data available at each timestamp
+- **Extensible Framework:** Base `Strategy` class for implementing custom strategies
+
+### 5. Backtesting Engine
+- **Trade Execution:** Simulates buy/sell orders with configurable fees
+- **Position Management:** Tracks cash, shares, and portfolio value over time
+- **Trade History:** Records all transactions with dates, prices, and quantities
+- **Equity Curve:** Generates time series of portfolio value
+
+```python
+class Backtester:
+    def __init__(self, initial_cash=10000, fee_per_trade=0):
+        # Initialize with starting capital and optional fees
+        
+    def run(self, prices, signals):
+        # Execute backtest and return equity curve
+```
+
+### 6. Performance Metrics
+Comprehensive analysis suite in `metrics.py`:
+- **Total Return:** Overall percentage gain/loss
+- **CAGR:** Compound Annual Growth Rate (annualized return)
+- **Max Drawdown:** Largest peak-to-trough decline (risk measure)
 - **Volatility:** Annualized standard deviation of returns
-- **Sharpe Ratio:** Risk-adjusted return
+- **Sharpe Ratio:** Risk-adjusted return (excess return per unit of risk)
 - **Win Rate:** Percentage of profitable trades
 
-### 6. Visualization Suite
-- **Price Charts:** Historical prices with MA overlays
-- **Equity Curves:** Strategy performance over time
-- **Drawdown Analysis:** Visual representation of risk
+### 7. Visualization Suite
+Three chart types saved to `results/` directory:
+- **Price & SMA Chart** (`price_sma.png`): Historical prices with MA overlays
+- **Equity Curve** (`equity_curve.png`): Strategy performance over time
+- **Drawdown Analysis** (`drawdown.png`): Visual risk representation
 
 ## Setup
 
@@ -76,39 +107,82 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Required packages:
+- `pandas` - Data manipulation
+- `numpy` - Numerical computations
+- `yfinance` - Yahoo Finance API
+- `matplotlib` - Plotting
+- `pytest` - Testing framework
+
 ## Usage
 
+### Basic Backtest
 ```bash
 python src/main.py --symbol AAPL --start 2018-01-01 --end 2025-01-01 --short 50 --long 200
 ```
 
-### Arguments:
-- `--symbol`: Stock ticker (default: AAPL)
-- `--start`: Start date (YYYY-MM-DD)
-- `--end`: End date (YYYY-MM-DD)
-- `--short`: Short MA window (default: 50)
-- `--long`: Long MA window (default: 200)
+### Command-Line Arguments
+- `--symbol`: Stock ticker symbol (default: `AAPL`)
+- `--start`: Start date in YYYY-MM-DD format (default: `2018-01-01`)
+- `--end`: End date in YYYY-MM-DD format (default: `2025-01-01`)
+- `--short`: Short moving average window in days (default: `50`)
+- `--long`: Long moving average window in days (default: `200`)
+
+### Example Commands
+```bash
+# Test Tesla with 20/50 day MAs
+python src/main.py --symbol TSLA --short 20 --long 50
+
+# Backtest S&P 500 over 10 years
+python src/main.py --symbol SPY --start 2015-01-01 --end 2025-01-01
+
+# Quick test with 10/30 day crossover
+python src/main.py --symbol MSFT --short 10 --long 30
+```
 
 ## Running Tests
 ```bash
 pytest -v
 ```
 
+Tests cover:
+- Indicator calculations
+- Signal generation logic
+- Backtester execution
+- Metrics accuracy
+
 ## Output
-- **Console**: Backtest metrics (return, CAGR, Sharpe ratio, etc.)
-- **Charts**: Saved to `results/` directory
-  - `price_sma.png`: Price with MA lines
-  - `equity_curve.png`: Strategy equity over time
-  - `drawdown.png`: Drawdown analysis
+
+### Console Output
+```
+=== BACKTEST RESULTS ===
+Final Value: $15,234.56
+Total Return: 52.35%
+CAGR: 8.92%
+Max Drawdown: -18.42%
+Volatility: 22.15%
+Sharpe Ratio: 0.8734
+Win Rate: 56.25%
+Number of Trades: 16
+```
+
+### Generated Charts
+Saved to `results/` directory:
+- `price_sma.png` - Price history with short/long MA lines
+- `equity_curve.png` - Portfolio value over time
+- `drawdown.png` - Drawdown periods highlighted in red
+
 
 ## Future Enhancements
-- Multi-timeframe analysis
+- Multi-timeframe analysis (daily, hourly, minute data)
 - Additional indicators (Bollinger Bands, MACD, Stochastic)
-- Portfolio optimization
-- Risk management (stop-loss, position sizing)
-- Walk-forward analysis
-- Parameter optimization with grid search
-- Live trading integration
+- Multiple strategy comparison framework
+- Portfolio optimization and asset allocation
+- Risk management features (stop-loss, take-profit, position sizing)
+- Walk-forward analysis for robustness testing
+- Parameter optimization with grid search/genetic algorithms
+- Live trading integration with broker APIs
+- Web dashboard for interactive backtesting
 
 ## Contact
 **Email:** leojongenli@gmail.com  
