@@ -10,7 +10,7 @@ Wanted to build a smaller scale python/finance related project. An attempt to ap
 
 | Component | Technology | Purpose |
 |-----------|------------|---------|
-| Language | Python 3.x | Core logic and calculations |
+| Language | Python 3.12.5 | Core logic and calculations |
 | Data Source | yfinance | Yahoo Finance API integration |
 | Data Processing | pandas, NumPy | Time series analysis |
 | Visualization | matplotlib | Chart generation |
