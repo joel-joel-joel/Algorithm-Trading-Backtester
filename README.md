@@ -4,7 +4,7 @@
 A complete Python-based algorithmic trading backtesting framework for testing MA crossover strategies on historical stock data.
 
 ## Why I Made This
-I've been interested in finance since I started university but I only revently started delving into the world of stocks and trading concepts. This project is my attempt to apply fundamental algorithmic trading concepts and try building a testing framework. Built this on Repilt.
+Wanted to build a smaller scale python/finance related project. An attempt to apply fundamental algorithmic trading concepts and try building a testing framework. Built this on Repilt. 
 
 ## Tech Stack
 
