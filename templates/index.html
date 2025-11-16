@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Algo Backtester</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>Algo Backtester</h2>
+
+        <form action="/backtest" method="POST" class="form-box">
+
+            <label>Stock Symbol</label>
+            <input type="text" name="symbol" placeholder="AAPL" required>
+
+            <label>Start Date</label>
+            <input type="date" name="start" required>
+
+            <label>End Date</label>
+            <input type="date" name="end" required>
+
+            <label>Short MA Window</label>
+            <input type="number" name="short_ma" placeholder="20" required>
+
+            <label>Long MA Window</label>
+            <input type="number" name="long_ma" placeholder="50" required>
+
+            <button type="submit">Run Backtest</button>
+        </form>
+
+        {% if metrics %}
+        <div class="results-box">
+            <h3>Backtest Results</h3>
+
+            <p><strong>Total Return:</strong> {{ metrics.total_return }}</p>
+            <p><strong>CAGR:</strong> {{ metrics.cagr }}</p>
+            <p><strong>Max Drawdown:</strong> {{ metrics.max_drawdown }}</p>
+            <p><strong>Sharpe Ratio:</strong> {{ metrics.sharpe_ratio }}</p>
+            <p><strong>Win Rate:</strong> {{ metrics.win_rate }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
